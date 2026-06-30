@@ -143,13 +143,11 @@ void GameLogic::handleEvents(float deltaTime, int keyCode)
 	if (moveLeft && !moveRight)
 	{
 		player.move(-1, deltaTime);
-		std::cout << "LEFT  x = " << player.x << std::endl;
 	}
 	// Di chuyển phải
 	else if (moveRight && !moveLeft)
 	{
 		player.move(1, deltaTime);
-		std::cout << "RIGHT x = " << player.x << std::endl;
 	}
 	else
 	{
@@ -212,6 +210,12 @@ void GameLogic::handleEvents(float deltaTime, int keyCode)
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		climbing = false;
+		interactEvent = true;
+	}
+
+	// Tương tác (mở rương, lấy chìa khóa, mở cửa...)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+	{
 		interactEvent = true;
 	}
 }
