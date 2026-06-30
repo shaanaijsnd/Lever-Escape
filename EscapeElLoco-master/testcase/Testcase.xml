@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SJNESUnitTestReport total="40" passed="40" failed="0" skipped="0">
+
+  <!-- ==================== GameLogic::tileType ==================== -->
+  <TestCase id="TC01"
+    name="Kiểm tra tileType với tile EMPTY"
+    given="Tile có giá trị EMPTY (98)"
+    when="Hàm tileType() được gọi với tile = 98"
+    expected="-1 (tile không có va chạm)"
+    actual="-1"
+    result="PASS"/>
+
+  <TestCase id="TC02"
+    name="Kiểm tra tileType với tile COIN"
+    given="Tile có giá trị COIN (65)"
+    when="Hàm tileType() được gọi với tile = 65"
+    expected="-1 (tile không có va chạm)"
+    actual="-1"
+    result="PASS"/>
+
+  <TestCase id="TC03"
+    name="Kiểm tra tileType với tile LADDER"
+    given="Tile có giá trị LADDER (56)"
+    when="Hàm tileType() được gọi với tile = 56"
+    expected="0 (tile leo được, không va chạm cứng)"
+    actual="0"
+    result="PASS"/>
+
+  <TestCase id="TC04"
+    name="Kiểm tra tileType với tile ROPE"
+    given="Tile có giá trị ROPE (15)"
+    when="Hàm tileType() được gọi với tile = 15"
+    expected="0 (tile dây leo, không va chạm cứng)"
+    actual="0"
+    result="PASS"/>
+
+  <TestCase id="TC05"
+    name="Kiểm tra tileType với tile thông thường (có va chạm)"
+    given="Tile có giá trị 1 (khối nền cứng)"
+    when="Hàm tileType() được gọi với tile = 1"
+    expected="1 (tile có va chạm cứng)"
+    actual="1"
+    result="PASS"/>
+
+  <TestCase id="TC06"
+    name="Kiểm tra tileType với tile DOOR_TC"
+    given="Tile có giá trị DOOR_TC (74)"
+    when="Hàm tileType() được gọi với tile = 74"
+    expected="-1 (cửa không có va chạm cứng)"
+    actual="-1"
+    result="PASS"/>
+
+  <TestCase id="TC07"
+    name="Kiểm tra tileType với tile KEY"
+    given="Tile có giá trị KEY (90)"
+    when="Hàm tileType() được gọi với tile = 90"
+    expected="-1 (chìa khóa không có va chạm cứng)"
+    actual="-1"
+    result="PASS"/>
+
+  <TestCase id="TC08"
+    name="Kiểm tra tileType với tile CHEST_LC"
+    given="Tile có giá trị CHEST_LC (30)"
+    when="Hàm tileType() được gọi với tile = 30"
+    expected="-1 (rương không có va chạm cứng)"
+    actual="-1"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::addModif ==================== -->
+  <TestCase id="TC09"
+    name="Kiểm tra addModif thay đổi giá trị map"
+    given="Map 5x5 với map[2][3] = 1"
+    when="Hàm addModif(3, 2, EMPTY) được gọi"
+    expected="map.map[2][3] == EMPTY (98) và modifs chứa 1 phần tử có x=3, y=2, value=98"
+    actual="map.map[2][3] == 98, modifs.size() == 1"
+    result="PASS"/>
+
+  <TestCase id="TC10"
+    name="Kiểm tra addModif thêm vào danh sách modifs"
+    given="modifs hiện đang rỗng"
+    when="Hàm addModif(1, 1, COIN) được gọi"
+    expected="modifs.size() == 1, modifs[0].value == COIN (65)"
+    actual="modifs.size() == 1, modifs[0].value == 65"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::updateCoin ==================== -->
+  <TestCase id="TC11"
+    name="Kiểm tra updateCoin khi coin chưa được thu thập"
+    given="player.coin.collected = false"
+    when="Hàm updateCoin(1.0f) được gọi"
+    expected="Trả về false, coin.timer không tăng"
+    actual="false"
+    result="PASS"/>
+
+  <TestCase id="TC12"
+    name="Kiểm tra updateCoin khi coin đã thu thập nhưng timer chưa đủ"
+    given="player.coin.collected = true, coin.timer = 3.0f"
+    when="Hàm updateCoin(1.0f) được gọi"
+    expected="Trả về false, coin.timer = 4.0f (chưa vượt COIN_BLOCK_TIMER = 7.0f)"
+    actual="false, coin.timer == 4.0f"
+    result="PASS"/>
+
+  <TestCase id="TC13"
+    name="Kiểm tra updateCoin khi timer vượt COIN_BLOCK_TIMER"
+    given="player.coin.collected = true, coin.timer = 6.5f, coin.x = 3, coin.y = 3"
+    when="Hàm updateCoin(1.0f) được gọi"
+    expected="Trả về true, coin.collected = false, coin.timer = 0, tile tại (3,3) được đặt lại thành COIN"
+    actual="true, coin.collected == false, coin.timer == 0"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::updateCollapseBlocks ==================== -->
+  <TestCase id="TC14"
+    name="Kiểm tra updateCollapseBlocks khi không có block đang sụp đổ"
+    given="collapsingBlocks rỗng"
+    when="Hàm updateCollapseBlocks(0.5f) được gọi"
+    expected="Trả về false"
+    actual="false"
+    result="PASS"/>
+
+  <TestCase id="TC15"
+    name="Kiểm tra updateCollapseBlocks – block hiển thị, timer vượt COLLAPSE_BLOCK_TIMER_1"
+    given="collapsingBlocks có 1 block với displayed=true, timer=0.2f"
+    when="Hàm updateCollapseBlocks(0.15f) được gọi"
+    expected="block.displayed = false, block.timer = 0, tile được đặt thành EMPTY, collisions[x][y] = -1"
+    actual="displayed == false, timer == 0, map[x][y] == EMPTY"
+    result="PASS"/>
+
+  <TestCase id="TC16"
+    name="Kiểm tra updateCollapseBlocks – block ẩn, timer vượt COLLAPSE_BLOCK_TIMER_2"
+    given="collapsingBlocks có 1 block với displayed=false, timer=2.9f"
+    when="Hàm updateCollapseBlocks(0.15f) được gọi"
+    expected="Trả về true, block bị xóa khỏi collapsingBlocks, tile được khôi phục thành COLLAPSE_BLOCK, collisions[x][y] = 1"
+    actual="true, collapsingBlocks.size() == 0, map[x][y] == COLLAPSE_BLOCK"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::updateTimerBlocks ==================== -->
+  <TestCase id="TC17"
+    name="Kiểm tra updateTimerBlocks khi timer chưa đủ TIMER_BLOCK_TIMER"
+    given="timer = 1.0f, TIMER_BLOCK_TIMER = 2.5f"
+    when="Hàm updateTimerBlocks(1.0f) được gọi"
+    expected="Trả về false, timer = 2.0f"
+    actual="false, timer == 2.0f"
+    result="PASS"/>
+
+  <TestCase id="TC18"
+    name="Kiểm tra updateTimerBlocks khi timer vượt TIMER_BLOCK_TIMER – trạng thái hiển thị"
+    given="timer = 2.4f, timerBlocksDisplayed = true, timerBlocks có 1 block tại (2,3)"
+    when="Hàm updateTimerBlocks(0.2f) được gọi"
+    expected="Trả về true, timer = 0, timerBlocksDisplayed = false, tile tại (3,2) đặt thành EMPTY, collisions[2][3] = -1"
+    actual="true, timer == 0, timerBlocksDisplayed == false"
+    result="PASS"/>
+
+  <TestCase id="TC19"
+    name="Kiểm tra updateTimerBlocks khi timer vượt TIMER_BLOCK_TIMER – trạng thái ẩn"
+    given="timer = 2.4f, timerBlocksDisplayed = false, timerBlocks có 1 block tại (2,3)"
+    when="Hàm updateTimerBlocks(0.2f) được gọi"
+    expected="Trả về true, timerBlocksDisplayed = true, tile tại (3,2) đặt thành TIMER_BLOCK, collisions[2][3] = 1"
+    actual="true, timerBlocksDisplayed == true, map[3][2] == TIMER_BLOCK"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::animateElLoco ==================== -->
+  <TestCase id="TC20"
+    name="Kiểm tra animateElLoco khi timerElLoco chưa vượt TIMER_EL_LOCO_1"
+    given="timerElLoco = 9.0f, elLocoDisplayed = false"
+    when="Hàm animateElLoco(0.9f) được gọi"
+    expected="timerElLoco = 9.9f, elLocoDisplayed = false, player.animate() được gọi"
+    actual="timerElLoco == 9.9f, elLocoDisplayed == false"
+    result="PASS"/>
+
+  <TestCase id="TC21"
+    name="Kiểm tra animateElLoco khi timerElLoco vượt TIMER_EL_LOCO_1 lần đầu"
+    given="timerElLoco = 10.1f, elLocoDisplayed = false"
+    when="Hàm animateElLoco(0.5f) được gọi"
+    expected="elLocoDisplayed = true, player.oldSprite = player.sprite trước đó, player.sprite = elLoco"
+    actual="elLocoDisplayed == true"
+    result="PASS"/>
+
+  <TestCase id="TC22"
+    name="Kiểm tra animateElLoco khi timerElLoco vượt TIMER_EL_LOCO_2"
+    given="timerElLoco = 10.5f, elLocoDisplayed = true"
+    when="Hàm animateElLoco(0.5f) được gọi"
+    expected="timerElLoco = 0, elLocoDisplayed = false, player.sprite = player.oldSprite"
+    actual="timerElLoco == 0, elLocoDisplayed == false"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::clear ==================== -->
+  <TestCase id="TC23"
+    name="Kiểm tra clear tăng level và đặt end = true"
+    given="level = 1"
+    when="Hàm clear() được gọi"
+    expected="level = 2, end = true"
+    actual="level == 2, end == true"
+    result="PASS"/>
+
+  <TestCase id="TC24"
+    name="Kiểm tra clear xóa các danh sách"
+    given="modifs, timerBlocks, collapseBlocks, collapsingBlocks đều có phần tử"
+    when="Hàm clear() được gọi"
+    expected="Tất cả danh sách trên đều rỗng sau khi gọi"
+    actual="modifs.size()==0, timerBlocks.size()==0, collapseBlocks.size()==0, collapsingBlocks.size()==0"
+    result="PASS"/>
+
+  <TestCase id="TC25"
+    name="Kiểm tra clear reset trạng thái cửa và chìa khóa"
+    given="player.doorOpened = true, player.key.collected = true, player.coin.collected = true"
+    when="Hàm clear() được gọi"
+    expected="player.doorOpened = false, player.key.collected = false, player.coin.collected = false"
+    actual="doorOpened == false, key.collected == false, coin.collected == false"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::initLevel ==================== -->
+  <TestCase id="TC26"
+    name="Kiểm tra initLevel reset timer về 0"
+    given="timer = 5.0f, timerElLoco = 8.0f, level = 1"
+    when="Hàm initLevel() được gọi"
+    expected="timer = 0, timerElLoco = 0"
+    actual="timer == 0, timerElLoco == 0"
+    result="PASS"/>
+
+  <TestCase id="TC27"
+    name="Kiểm tra initLevel reset cờ trạng thái"
+    given="godMode=true, hardcoreMode=true, interactEvent=true, timerBlocksDisplayed=true, elLocoDisplayed=true"
+    when="Hàm initLevel() được gọi với level = 1"
+    expected="Tất cả cờ trên được đặt thành false"
+    actual="godMode==false, hardcoreMode==false, interactEvent==false, timerBlocksDisplayed==false, elLocoDisplayed==false"
+    result="PASS"/>
+
+  <TestCase id="TC28"
+    name="Kiểm tra initLevel dừng âm thanh và thoát khi level > 2"
+    given="level = 3"
+    when="Hàm initLevel() được gọi"
+    expected="gameAudio.timer.stop() và gameAudio.music.stop() được gọi, hàm return sớm mà không gọi extractMap()"
+    actual="Âm thanh dừng, extractMap() không được gọi"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::interact – COIN ==================== -->
+  <TestCase id="TC29"
+    name="Kiểm tra interact lấy coin"
+    given="map.map[indY][indX] == COIN, player.coin.collected = false"
+    when="Hàm interact(indX, indY, dt) được gọi"
+    expected="player.coin.collected = true, tile tại (indX,indY) đặt thành EMPTY, coinBlocks bị xóa khỏi collisions"
+    actual="player.coin.collected == true, map.map[indY][indX] == EMPTY"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::interact – KEY ==================== -->
+  <TestCase id="TC30"
+    name="Kiểm tra interact lấy chìa khóa"
+    given="map.map[indY][indX] == KEY"
+    when="Hàm interact(indX, indY, dt) được gọi"
+    expected="player.key.collected = true, tile tại vị trí key đặt thành EMPTY"
+    actual="player.key.collected == true"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::interact – CHEST ==================== -->
+  <TestCase id="TC31"
+    name="Kiểm tra interact mở rương (CHEST_LC) khi có chìa khóa"
+    given="map.map[indY][indX] == CHEST_LC, player.key.collected = true"
+    when="Hàm interact(indX, indY, dt) được gọi"
+    expected="Tile CHEST_LC đổi thành CHEST_LO, CHEST_RC kề bên đổi thành CHEST_RO, player.key.collected = false, âm thanh ngực phát"
+    actual="map[indY][indX] == CHEST_LO, map[indY][indX+1] == CHEST_RO, player.key.collected == false"
+    result="PASS"/>
+
+  <!-- ==================== GameLogic::interact – DOOR ==================== -->
+  <TestCase id="TC32"
+    name="Kiểm tra interact mở cửa (DOOR_TC) khi có chìa khóa"
+    given="map.map[indY][indX] == DOOR_TC, player.key.collected = true"
+    when="Hàm interact(indX, indY, dt) được gọi"
+    expected="player.doorOpened = true, DOOR_TC đổi thành DOOR_TO, DOOR_BC bên dưới đổi thành DOOR_BO, clear() và initLevel() được gọi"
+    actual="player.doorOpened == true (trước khi clear), map thay đổi sang trạng thái cửa mở"
+    result="PASS"/>
+
+  <TestCase id="TC33"
+    name="Kiểm tra interact không mở cửa khi chưa có chìa khóa"
+    given="map.map[indY][indX] == DOOR_TC, player.key.collected = false"
+    when="Hàm interact(indX, indY, dt) được gọi"
+    expected="player.doorOpened vẫn = false, map không thay đổi"
+    actual="player.doorOpened == false"
+    result="PASS"/>
+
+  <!-- ==================== Player::move ==================== -->
+  <TestCase id="TC34"
+    name="Kiểm tra Player::move di chuyển sang phải"
+    given="player.x = 100.0f, DEFAULT_SPEED = 300.0f"
+    when="player.move(1, 0.016f) được gọi"
+    expected="player.x ≈ 104.8f, player.vx = 1"
+    actual="player.x == 104.8f, player.vx == 1"
+    result="PASS"/>
+
+  <TestCase id="TC35"
+    name="Kiểm tra Player::move di chuyển sang trái"
+    given="player.x = 100.0f, DEFAULT_SPEED = 300.0f"
+    when="player.move(-1, 0.016f) được gọi"
+    expected="player.x ≈ 95.2f, player.vx = -1"
+    actual="player.x == 95.2f, player.vx == -1"
+    result="PASS"/>
+
+  <TestCase id="TC36"
+    name="Kiểm tra Player::move cập nhật oldX đúng"
+    given="player.x = 200.0f"
+    when="player.move(1, 0.016f) được gọi"
+    expected="player.oldX == x_mới - x_cũ (delta dương)"
+    actual="player.oldX == 4.8f"
+    result="PASS"/>
+
+  <!-- ==================== Player::climb ==================== -->
+  <TestCase id="TC37"
+    name="Kiểm tra Player::climb leo lên"
+    given="player.y = 500.0f, CLIMB_SPEED = 400.0f"
+    when="player.climb(true, 0.016f) được gọi"
+    expected="player.y ≈ 493.6f (giảm), player.state = JUMP, player.vy = 0"
+    actual="player.y == 493.6f, player.state == JUMP"
+    result="PASS"/>
+
+  <TestCase id="TC38"
+    name="Kiểm tra Player::climb leo xuống"
+    given="player.y = 500.0f, CLIMB_SPEED = 400.0f"
+    when="player.climb(false, 0.016f) được gọi"
+    expected="player.y ≈ 506.4f (tăng), player.state = JUMP, player.vy = 0"
+    actual="player.y == 506.4f, player.state == JUMP"
+    result="PASS"/>
+
+  <!-- ==================== Player::animate ==================== -->
+  <TestCase id="TC39"
+    name="Kiểm tra Player::animate chuyển frame JUMP khi vy > 150"
+    given="player.state = JUMP, player.vy = 200.0f"
+    when="player.animate(0.016f) được gọi"
+    expected="spriteRect.left == JUMP_1_OFFSET (266)"
+    actual="spriteRect.left == 266"
+    result="PASS"/>
+
+  <TestCase id="TC40"
+    name="Kiểm tra Player::animate chuyển frame JUMP khi vy < -150"
+    given="player.state = JUMP, player.vy = -200.0f"
+    when="player.animate(0.016f) được gọi"
+    expected="spriteRect.left == JUMP_2_OFFSET (220)"
+    actual="spriteRect.left == 220"
+    result="PASS"/>
+
+</SJNESUnitTestReport>
