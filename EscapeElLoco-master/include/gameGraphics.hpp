@@ -60,6 +60,10 @@ public:
 	void displayEndGame();
 	void buildWindow();
 	float clamp(float v, float min, float max) const;
+
+	// Menu chinh
+	int showMenu();
+
 	~GameGraphics();
 };
 
