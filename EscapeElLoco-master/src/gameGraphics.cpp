@@ -11,6 +11,126 @@ GameGraphics::GameGraphics(GameLogic& gl) : hardcoreMode(false), end(false), gam
     init();
 }
 
+int GameGraphics::showMenu()
+{
+    // 0 = Play, 1 = Quit
+    int selected = 0;
+    const int OPTION_COUNT = 2;
+    std::string labels[OPTION_COUNT] = { "PLAY", "QUIT" };
+
+    sf::Text title;
+    title.setFont(font);
+    title.setCharacterSize(72);
+    title.setFillColor(sf::Color(255, 215, 0));
+    title.setString(TITLE);
+    sf::FloatRect titleBounds = title.getLocalBounds();
+    title.setOrigin(titleBounds.width / 2.f, titleBounds.height / 2.f);
+    title.setPosition(WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f - 150.f);
+
+    sf::Text subtitle;
+    subtitle.setFont(font);
+    subtitle.setCharacterSize(20);
+    subtitle.setFillColor(sf::Color(200, 200, 200));
+    subtitle.setString("Use UP/DOWN to choose, ENTER to confirm");
+    sf::FloatRect subBounds = subtitle.getLocalBounds();
+    subtitle.setOrigin(subBounds.width / 2.f, subBounds.height / 2.f);
+    subtitle.setPosition(WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f + 160.f);
+
+    std::vector<sf::Text> optionTexts;
+    for (int i = 0; i < OPTION_COUNT; i++)
+    {
+        sf::Text t;
+        t.setFont(font);
+        t.setCharacterSize(40);
+        t.setString(labels[i]);
+        sf::FloatRect b = t.getLocalBounds();
+        t.setOrigin(b.width / 2.f, b.height / 2.f);
+        t.setPosition(WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f - 20.f + i * 70.f);
+        optionTexts.push_back(t);
+    }
+
+    sf::RectangleShape overlay(sf::Vector2f((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT));
+    overlay.setFillColor(sf::Color(0, 0, 0, 200));
+
+    sf::Event event;
+    bool decided = false;
+    int result = 1; // mac dinh la Quit neu dong cua so
+
+    while (window.isOpen() && !decided)
+    {
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::Closed)
+            {
+                window.close();
+                return 1;
+            }
+            else if (event.type == Event::KeyReleased)
+            {
+                if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::W)
+                {
+                    selected = (selected - 1 + OPTION_COUNT) % OPTION_COUNT;
+                }
+                else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S)
+                {
+                    selected = (selected + 1) % OPTION_COUNT;
+                }
+                else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space)
+                {
+                    result = selected;
+                    decided = true;
+                }
+                else if (event.key.code == sf::Keyboard::Escape)
+                {
+                    result = 1;
+                    decided = true;
+                }
+            }
+            else if (event.type == Event::MouseMoved)
+            {
+                sf::Vector2f mp((float)event.mouseMove.x, (float)event.mouseMove.y);
+                for (int i = 0; i < OPTION_COUNT; i++)
+                {
+                    if (optionTexts[i].getGlobalBounds().contains(mp))
+                        selected = i;
+                }
+            }
+            else if (event.type == Event::MouseButtonReleased)
+            {
+                sf::Vector2f mp((float)event.mouseButton.x, (float)event.mouseButton.y);
+                for (int i = 0; i < OPTION_COUNT; i++)
+                {
+                    if (optionTexts[i].getGlobalBounds().contains(mp))
+                    {
+                        result = i;
+                        decided = true;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < OPTION_COUNT; i++)
+        {
+            if (i == selected)
+                optionTexts[i].setFillColor(sf::Color(255, 215, 0));
+            else
+                optionTexts[i].setFillColor(sf::Color::White);
+        }
+
+        window.setView(window.getDefaultView());
+        window.clear(sf::Color(20, 20, 30));
+        drawBackground(0);
+        window.draw(overlay);
+        window.draw(title);
+        for (auto& t : optionTexts)
+            window.draw(t);
+        window.draw(subtitle);
+        window.display();
+    }
+
+    return result;
+}
+
 void GameGraphics::displayEndGame()
 {
     sf::Text text;
