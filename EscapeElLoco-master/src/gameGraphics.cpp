@@ -416,6 +416,200 @@ int GameGraphics::showMenu()
     return result;
 }
 
+// ─────────────────────────────────────────────────────────────
+//  showPause() – Menu tạm dừng khi nhấn ESC trong game
+// ─────────────────────────────────────────────────────────────
+int GameGraphics::showPause()
+{
+    const int OPT = 3;
+    std::string labels[OPT] = { "TIEP TUC", "VE MENU", "THOAT GAME" };
+    int selected = 0;
+    int result   = 0;
+    bool decided = false;
+
+    sf::Clock clk;
+
+    // ── Chụp ảnh màn chơi hiện tại làm nền mờ ──────────────
+    sf::Texture screenTex;
+    screenTex.create(WINDOW_WIDTH, WINDOW_HEIGHT);
+    screenTex.update(window);
+    sf::Sprite screenSprite(screenTex);
+    screenSprite.setColor(sf::Color(255, 255, 255, 80));
+
+    // ── Panel trung tâm ─────────────────────────────────────
+    const float PW = 380.f, PH = 320.f;
+    const float PX = (WINDOW_WIDTH - PW) / 2.f;
+    const float PY = (WINDOW_HEIGHT - PH) / 2.f;
+
+    sf::RectangleShape panelBg(sf::Vector2f(PW, PH));
+    panelBg.setPosition(PX, PY);
+    panelBg.setFillColor(sf::Color(8, 5, 20, 230));
+    panelBg.setOutlineThickness(2.f);
+    panelBg.setOutlineColor(sf::Color(255, 215, 0, 180));
+
+    // Góc trang trí
+    auto mkC = [](float x,float y,float w,float h){
+        sf::RectangleShape c(sf::Vector2f(w,h));
+        c.setPosition(x,y); c.setFillColor(sf::Color(255,215,0,220)); return c;
+    };
+    float cw=12.f, ct=2.f;
+    sf::RectangleShape corners[8]={
+        mkC(PX,PY,cw,ct), mkC(PX,PY,ct,cw),
+        mkC(PX+PW-cw,PY,cw,ct), mkC(PX+PW-ct,PY,ct,cw),
+        mkC(PX,PY+PH-ct,cw,ct), mkC(PX,PY+PH-cw,ct,cw),
+        mkC(PX+PW-cw,PY+PH-ct,cw,ct), mkC(PX+PW-ct,PY+PH-cw,ct,cw),
+    };
+
+    // ── Tiêu đề PAUSED ──────────────────────────────────────
+    sf::Text pauseTitle;
+    pauseTitle.setFont(font); pauseTitle.setCharacterSize(52);
+    pauseTitle.setFillColor(sf::Color(255, 215, 0));
+    pauseTitle.setString("PAUSED");
+    sf::FloatRect tb = pauseTitle.getLocalBounds();
+    pauseTitle.setOrigin(tb.left + tb.width/2.f, tb.top + tb.height/2.f);
+    pauseTitle.setPosition(WINDOW_WIDTH/2.f, PY + 45.f);
+
+    sf::Text pauseShadow = pauseTitle;
+    pauseShadow.setFillColor(sf::Color(0,0,0,120));
+    pauseShadow.setPosition(WINDOW_WIDTH/2.f + 3.f, PY + 48.f);
+
+    // Đường kẻ dưới tiêu đề
+    sf::RectangleShape divL(sf::Vector2f(300.f, 2.f));
+    divL.setFillColor(sf::Color(255, 215, 0, 140));
+    divL.setOrigin(150.f, 1.f);
+    divL.setPosition(WINDOW_WIDTH/2.f, PY + 78.f);
+
+    // ── Các nút ─────────────────────────────────────────────
+    const float OPT_Y0 = PY + 100.f, OPT_STEP = 68.f;
+
+    struct Btn { sf::RectangleShape bg, accent; sf::Text text; };
+    std::vector<Btn> btns(OPT);
+    for (int i = 0; i < OPT; i++) {
+        float by = OPT_Y0 + i * OPT_STEP;
+        btns[i].bg.setSize(sf::Vector2f(PW - 40.f, 52.f));
+        btns[i].bg.setPosition(PX + 20.f, by);
+        btns[i].accent.setSize(sf::Vector2f(5.f, 42.f));
+        btns[i].accent.setPosition(PX + 20.f, by + 5.f);
+        btns[i].text.setFont(font); btns[i].text.setCharacterSize(28);
+        btns[i].text.setString(labels[i]);
+        sf::FloatRect b = btns[i].text.getLocalBounds();
+        btns[i].text.setOrigin(b.left+b.width/2.f, b.top+b.height/2.f);
+        btns[i].text.setPosition(WINDOW_WIDTH/2.f, by + 24.f);
+    }
+
+    // Màu nút THOÁT GAME đỏ nhạt
+    sf::Event event;
+
+    while (window.isOpen() && !decided)
+    {
+        float t = clk.getElapsedTime().asSeconds();
+        float pulse = 0.5f + 0.5f * std::sin(t * 2.5f);
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            { window.close(); return 2; }
+
+            if (event.type == sf::Event::KeyReleased)
+            {
+                if (event.key.code == sf::Keyboard::Up   || event.key.code == sf::Keyboard::W)
+                    selected = (selected - 1 + OPT) % OPT;
+                else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S)
+                    selected = (selected + 1) % OPT;
+                else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space)
+                { result = selected; decided = true; }
+                else if (event.key.code == sf::Keyboard::Escape)
+                { result = 0; decided = true; } // ESC lần 2 = tiếp tục
+            }
+            else if (event.type == sf::Event::MouseMoved)
+            {
+                sf::Vector2f mp((float)event.mouseMove.x, (float)event.mouseMove.y);
+                for (int i = 0; i < OPT; i++)
+                    if (btns[i].bg.getGlobalBounds().contains(mp)) selected = i;
+            }
+            else if (event.type == sf::Event::MouseButtonReleased)
+            {
+                sf::Vector2f mp((float)event.mouseButton.x, (float)event.mouseButton.y);
+                for (int i = 0; i < OPT; i++)
+                    if (btns[i].bg.getGlobalBounds().contains(mp))
+                    { selected = i; result = selected; decided = true; }
+            }
+        }
+
+        // ── Cập nhật style nút ──
+        for (int i = 0; i < OPT; i++) {
+            bool sel = (i == selected);
+            sf::Color accentCol = (i == 2)
+                ? sf::Color(220, 60, 60, 220)
+                : sf::Color(255, 215, 0, 220);
+
+            if (sel) {
+                sf::Color bgSel = (i == 2)
+                    ? sf::Color(80, 20, 20, 180)
+                    : sf::Color(80, 55, 0, 180);
+                btns[i].bg.setFillColor(bgSel);
+                btns[i].bg.setOutlineThickness(1.5f);
+                btns[i].bg.setOutlineColor(accentCol);
+                btns[i].accent.setFillColor(
+                    sf::Color(accentCol.r, accentCol.g, accentCol.b,
+                        (sf::Uint8)(180 + 60*pulse)));
+                sf::Color tc = (i == 2) ? sf::Color(255,100,100) : sf::Color(255,230,80);
+                btns[i].text.setFillColor(tc);
+                btns[i].text.setScale(1.04f, 1.04f);
+            } else {
+                btns[i].bg.setFillColor(sf::Color(30,20,50,100));
+                btns[i].bg.setOutlineThickness(1.f);
+                btns[i].bg.setOutlineColor(sf::Color(120,100,60,70));
+                btns[i].text.setFillColor(sf::Color(180,165,120));
+                btns[i].text.setScale(1.f, 1.f);
+            }
+        }
+
+        // ── Draw ────────────────────────────────────────────
+        window.setView(window.getDefaultView());
+
+        // Màn hình game mờ làm nền
+        window.draw(screenSprite);
+
+        // Lớp tối phủ lên
+        sf::RectangleShape dimmer(sf::Vector2f((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT));
+        dimmer.setFillColor(sf::Color(0, 0, 0, 160));
+        window.draw(dimmer);
+
+        // Panel
+        window.draw(panelBg);
+        for (auto& c : corners) window.draw(c);
+
+        // Gradient trong panel
+        drawGradientRect(window, PX+2, PY+2, PW-4, PH-4,
+            sf::Color(20,12,40,100), sf::Color(5,3,15,100));
+
+        window.draw(pauseShadow);
+        window.draw(pauseTitle);
+        window.draw(divL);
+
+        for (int i = 0; i < OPT; i++) {
+            window.draw(btns[i].bg);
+            if (i == selected) window.draw(btns[i].accent);
+            window.draw(btns[i].text);
+        }
+
+        // Hint
+        sf::Text hint;
+        hint.setFont(font); hint.setCharacterSize(15);
+        hint.setFillColor(sf::Color(120,100,60,180));
+        hint.setString("ESC - Tiep tuc choi");
+        sf::FloatRect hb = hint.getLocalBounds();
+        hint.setOrigin(hb.left+hb.width/2.f, hb.top+hb.height/2.f);
+        hint.setPosition(WINDOW_WIDTH/2.f, PY + PH - 22.f);
+        window.draw(hint);
+
+        window.display();
+    }
+
+    return result;
+}
+
 void GameGraphics::displayEndGame()
 {
     sf::Text text;
@@ -503,6 +697,23 @@ void GameGraphics::init()
 
     left_center_x = viewLeft.getSize().x / 2.f;
     bound_min_y = viewLeft.getSize().y / 2.f;
+}
+
+void GameGraphics::reinit()
+{
+    // Reset trạng thái đồ họa để chơi lại từ đầu
+    framerate  = 0.f;
+    blinkTime  = 0.f;
+    rotation   = 0.f;
+    end        = false;
+    hardcoreMode = false;
+
+    map.clear();
+    loadMap();
+
+    viewLeft = window.getDefaultView();
+    left_center_x = viewLeft.getSize().x / 2.f;
+    bound_min_y   = viewLeft.getSize().y / 2.f;
 }
 
 void GameGraphics::loadMap() {
