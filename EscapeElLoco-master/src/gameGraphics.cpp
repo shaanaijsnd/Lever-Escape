@@ -27,10 +27,10 @@ static void drawGradientRect(sf::RenderWindow& win,
     sf::Color top, sf::Color bot)
 {
     sf::VertexArray va(sf::Quads, 4);
-    va[0] = sf::Vertex(sf::Vector2f(x,     y),     top);
-    va[1] = sf::Vertex(sf::Vector2f(x + w, y),     top);
+    va[0] = sf::Vertex(sf::Vector2f(x, y), top);
+    va[1] = sf::Vertex(sf::Vector2f(x + w, y), top);
     va[2] = sf::Vertex(sf::Vector2f(x + w, y + h), bot);
-    va[3] = sf::Vertex(sf::Vector2f(x,     y + h), bot);
+    va[3] = sf::Vertex(sf::Vector2f(x, y + h), bot);
     win.draw(va);
 }
 
@@ -50,12 +50,12 @@ static std::vector<MenuParticle> spawnParticles(int n)
     srand(42);
     for (int i = 0; i < n; i++) {
         MenuParticle mp;
-        mp.pos  = { (float)(rand() % WINDOW_WIDTH), (float)(rand() % WINDOW_HEIGHT) };
-        mp.vel  = { (rand() % 40 - 20) / 60.f, -(rand() % 30 + 10) / 60.f };
+        mp.pos = { (float)(rand() % WINDOW_WIDTH), (float)(rand() % WINDOW_HEIGHT) };
+        mp.vel = { (rand() % 40 - 20) / 60.f, -(rand() % 30 + 10) / 60.f };
         mp.maxLife = mp.life = 180.f + rand() % 240;
         mp.size = 1.f + (rand() % 3);
         int variant = rand() % 3;
-        if (variant == 0) mp.col = sf::Color(255, 215,  50, 200);
+        if (variant == 0) mp.col = sf::Color(255, 215, 50, 200);
         else if (variant == 1) mp.col = sf::Color(200, 160, 255, 160);
         else               mp.col = sf::Color(255, 255, 255, 120);
         p.push_back(mp);
@@ -70,13 +70,13 @@ int GameGraphics::showMenu()
 {
     // ── Cấu hình lựa chọn ──────────────────────────────────
     const int OPTION_COUNT = 3;
-    std::string labels[OPTION_COUNT]    = { "PLAY",       "CONTROLS",     "QUIT" };
+    std::string labels[OPTION_COUNT] = { "PLAY",       "CONTROLS",     "QUIT" };
     // 0=Play, 1=Controls (sub-screen), 2=Quit
 
     int selected = 0;
     bool decided = false;
     bool showControls = false;
-    int  result   = 2;
+    int  result = 2;
 
     sf::Clock menuClock;
 
@@ -145,22 +145,22 @@ int GameGraphics::showMenu()
         c.setPosition(x, y);
         c.setFillColor(sf::Color(255, 215, 0, 220));
         return c;
-    };
+        };
     float cx = PANEL_X, cy = PANEL_Y, cw = 12.f, ct = 2.f;
     sf::RectangleShape corners[8] = {
         makeCorner(cx,           cy,                    cw, ct),
         makeCorner(cx,           cy,                    ct, cw),
-        makeCorner(cx+PANEL_W-cw,cy,                    cw, ct),
-        makeCorner(cx+PANEL_W-ct,cy,                    ct, cw),
-        makeCorner(cx,           cy+PANEL_H-ct,         cw, ct),
-        makeCorner(cx,           cy+PANEL_H-cw,         ct, cw),
-        makeCorner(cx+PANEL_W-cw,cy+PANEL_H-ct,         cw, ct),
-        makeCorner(cx+PANEL_W-ct,cy+PANEL_H-cw,         ct, cw),
+        makeCorner(cx + PANEL_W - cw,cy,                    cw, ct),
+        makeCorner(cx + PANEL_W - ct,cy,                    ct, cw),
+        makeCorner(cx,           cy + PANEL_H - ct,         cw, ct),
+        makeCorner(cx,           cy + PANEL_H - cw,         ct, cw),
+        makeCorner(cx + PANEL_W - cw,cy + PANEL_H - ct,         cw, ct),
+        makeCorner(cx + PANEL_W - ct,cy + PANEL_H - cw,         ct, cw),
     };
 
     // ── Texts cho từng option ──────────────────────────────
     const float OPTION_START_Y = PANEL_Y + 50.f;
-    const float OPTION_STEP    = 85.f;
+    const float OPTION_STEP = 85.f;
 
     struct MenuBtn {
         sf::Text  text;
@@ -204,7 +204,7 @@ int GameGraphics::showMenu()
     std::vector<sf::Text> ctrlTexts;
     for (int i = 0; i < 7; i++) {
         sf::Text t; t.setFont(font); t.setCharacterSize(22);
-        t.setFillColor(i == 6 ? sf::Color(180,120,60) : sf::Color(210, 200, 180));
+        t.setFillColor(i == 6 ? sf::Color(180, 120, 60) : sf::Color(210, 200, 180));
         t.setString(ctrlLines[i]);
         centerText(t, WINDOW_WIDTH / 2.f, 310.f + i * 38.f);
         ctrlTexts.push_back(t);
@@ -227,7 +227,7 @@ int GameGraphics::showMenu()
     // ── Skull deco (dùng ký tự đơn giản) ─────────────────
     sf::Text skullL, skullR;
     skullL.setFont(font); skullL.setCharacterSize(48);
-    skullL.setFillColor(sf::Color(255,215,0,80));
+    skullL.setFillColor(sf::Color(255, 215, 0, 80));
     skullL.setString("?"); // placeholder deco
     skullL.setPosition(80.f, 260.f);
     skullR = skullL;
@@ -244,20 +244,22 @@ int GameGraphics::showMenu()
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-            { window.close(); return 2; }
+            {
+                window.close(); return 2;
+            }
 
             if (showControls)
             {
                 if (event.type == sf::Event::KeyReleased &&
                     (event.key.code == sf::Keyboard::Escape ||
-                     event.key.code == sf::Keyboard::Enter))
+                        event.key.code == sf::Keyboard::Enter))
                     showControls = false;
                 continue;
             }
 
             if (event.type == sf::Event::KeyReleased)
             {
-                if (event.key.code == sf::Keyboard::Up   || event.key.code == sf::Keyboard::W)
+                if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::W)
                     selected = (selected - 1 + OPTION_COUNT) % OPTION_COUNT;
                 else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S)
                     selected = (selected + 1) % OPTION_COUNT;
@@ -267,7 +269,9 @@ int GameGraphics::showMenu()
                     else { result = (selected == 0) ? 0 : 2; decided = true; }
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
-                { result = 2; decided = true; }
+                {
+                    result = 2; decided = true;
+                }
             }
             else if (event.type == sf::Event::MouseMoved)
             {
@@ -293,18 +297,18 @@ int GameGraphics::showMenu()
             p.pos += p.vel;
             p.life -= 1.f;
             if (p.life <= 0) {
-                p.pos  = { (float)(rand() % WINDOW_WIDTH), (float)WINDOW_HEIGHT + 5.f };
+                p.pos = { (float)(rand() % WINDOW_WIDTH), (float)WINDOW_HEIGHT + 5.f };
                 p.life = p.maxLife;
             }
         }
 
         // ── Tính animation ──
-        float pulse     = 0.5f + 0.5f * std::sin(t * 2.5f);          // 0..1
-        float titleBob  = std::sin(t * 1.2f) * 5.f;                   // ±5px
+        float pulse = 0.5f + 0.5f * std::sin(t * 2.5f);          // 0..1
+        float titleBob = std::sin(t * 1.2f) * 5.f;                   // ±5px
         float glowAlpha = (sf::Uint8)(100 + 100 * pulse);
 
         // Title bobbing
-        centerText(titleText,   WINDOW_WIDTH / 2.f, 148.f + titleBob);
+        centerText(titleText, WINDOW_WIDTH / 2.f, 148.f + titleBob);
         centerText(titleShadow, WINDOW_WIDTH / 2.f + 4.f, 152.f + titleBob + 4.f);
 
         // Border màu đập theo nhịp
@@ -354,7 +358,7 @@ int GameGraphics::showMenu()
             for (auto& c : corners) window.draw(c);
 
             // Gradient bên trong panel
-            drawGradientRect(window, PANEL_X+2, PANEL_Y+2, PANEL_W-4, PANEL_H-4,
+            drawGradientRect(window, PANEL_X + 2, PANEL_Y + 2, PANEL_W - 4, PANEL_H - 4,
                 sf::Color(20, 12, 40, 120), sf::Color(8, 5, 20, 120));
 
             // Các nút
@@ -367,17 +371,18 @@ int GameGraphics::showMenu()
                 if (sel) {
                     btns[i].bg.setFillColor(sf::Color(80, 55, 0, 180));
                     btns[i].bg.setOutlineThickness(1.5f);
-                    btns[i].bg.setOutlineColor(sf::Color(255,215,0,200));
-                } else {
+                    btns[i].bg.setOutlineColor(sf::Color(255, 215, 0, 200));
+                }
+                else {
                     btns[i].bg.setFillColor(sf::Color(30, 20, 50, 120));
                     btns[i].bg.setOutlineThickness(1.f);
-                    btns[i].bg.setOutlineColor(sf::Color(120,100,60,80));
+                    btns[i].bg.setOutlineColor(sf::Color(120, 100, 60, 80));
                 }
                 window.draw(btns[i].bg);
 
                 // Accent bar bên trái
                 if (sel) {
-                    btns[i].accent.setFillColor(sf::Color(255, 215, 0, (sf::Uint8)(180 + 60*pulse)));
+                    btns[i].accent.setFillColor(sf::Color(255, 215, 0, (sf::Uint8)(180 + 60 * pulse)));
                     window.draw(btns[i].accent);
                 }
 
@@ -401,9 +406,9 @@ int GameGraphics::showMenu()
             sf::RectangleShape ctrlBg(sf::Vector2f(700.f, 380.f));
             ctrlBg.setFillColor(sf::Color(8, 5, 20, 220));
             ctrlBg.setOutlineThickness(2.f);
-            ctrlBg.setOutlineColor(sf::Color(255,215,0,160));
+            ctrlBg.setOutlineColor(sf::Color(255, 215, 0, 160));
             ctrlBg.setOrigin(350.f, 190.f);
-            ctrlBg.setPosition(WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f + 30.f);
+            ctrlBg.setPosition(WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f + 30.f);
             window.draw(ctrlBg);
 
             window.draw(ctrlTitle);
@@ -424,7 +429,7 @@ int GameGraphics::showPause()
     const int OPT = 3;
     std::string labels[OPT] = { "TIEP TUC", "VE MENU", "THOAT GAME" };
     int selected = 0;
-    int result   = 0;
+    int result = 0;
     bool decided = false;
 
     sf::Clock clk;
@@ -448,16 +453,16 @@ int GameGraphics::showPause()
     panelBg.setOutlineColor(sf::Color(255, 215, 0, 180));
 
     // Góc trang trí
-    auto mkC = [](float x,float y,float w,float h){
-        sf::RectangleShape c(sf::Vector2f(w,h));
-        c.setPosition(x,y); c.setFillColor(sf::Color(255,215,0,220)); return c;
-    };
-    float cw=12.f, ct=2.f;
-    sf::RectangleShape corners[8]={
+    auto mkC = [](float x, float y, float w, float h) {
+        sf::RectangleShape c(sf::Vector2f(w, h));
+        c.setPosition(x, y); c.setFillColor(sf::Color(255, 215, 0, 220)); return c;
+        };
+    float cw = 12.f, ct = 2.f;
+    sf::RectangleShape corners[8] = {
         mkC(PX,PY,cw,ct), mkC(PX,PY,ct,cw),
-        mkC(PX+PW-cw,PY,cw,ct), mkC(PX+PW-ct,PY,ct,cw),
-        mkC(PX,PY+PH-ct,cw,ct), mkC(PX,PY+PH-cw,ct,cw),
-        mkC(PX+PW-cw,PY+PH-ct,cw,ct), mkC(PX+PW-ct,PY+PH-cw,ct,cw),
+        mkC(PX + PW - cw,PY,cw,ct), mkC(PX + PW - ct,PY,ct,cw),
+        mkC(PX,PY + PH - ct,cw,ct), mkC(PX,PY + PH - cw,ct,cw),
+        mkC(PX + PW - cw,PY + PH - ct,cw,ct), mkC(PX + PW - ct,PY + PH - cw,ct,cw),
     };
 
     // ── Tiêu đề PAUSED ──────────────────────────────────────
@@ -466,18 +471,18 @@ int GameGraphics::showPause()
     pauseTitle.setFillColor(sf::Color(255, 215, 0));
     pauseTitle.setString("PAUSED");
     sf::FloatRect tb = pauseTitle.getLocalBounds();
-    pauseTitle.setOrigin(tb.left + tb.width/2.f, tb.top + tb.height/2.f);
-    pauseTitle.setPosition(WINDOW_WIDTH/2.f, PY + 45.f);
+    pauseTitle.setOrigin(tb.left + tb.width / 2.f, tb.top + tb.height / 2.f);
+    pauseTitle.setPosition(WINDOW_WIDTH / 2.f, PY + 45.f);
 
     sf::Text pauseShadow = pauseTitle;
-    pauseShadow.setFillColor(sf::Color(0,0,0,120));
-    pauseShadow.setPosition(WINDOW_WIDTH/2.f + 3.f, PY + 48.f);
+    pauseShadow.setFillColor(sf::Color(0, 0, 0, 120));
+    pauseShadow.setPosition(WINDOW_WIDTH / 2.f + 3.f, PY + 48.f);
 
     // Đường kẻ dưới tiêu đề
     sf::RectangleShape divL(sf::Vector2f(300.f, 2.f));
     divL.setFillColor(sf::Color(255, 215, 0, 140));
     divL.setOrigin(150.f, 1.f);
-    divL.setPosition(WINDOW_WIDTH/2.f, PY + 78.f);
+    divL.setPosition(WINDOW_WIDTH / 2.f, PY + 78.f);
 
     // ── Các nút ─────────────────────────────────────────────
     const float OPT_Y0 = PY + 100.f, OPT_STEP = 68.f;
@@ -493,8 +498,8 @@ int GameGraphics::showPause()
         btns[i].text.setFont(font); btns[i].text.setCharacterSize(28);
         btns[i].text.setString(labels[i]);
         sf::FloatRect b = btns[i].text.getLocalBounds();
-        btns[i].text.setOrigin(b.left+b.width/2.f, b.top+b.height/2.f);
-        btns[i].text.setPosition(WINDOW_WIDTH/2.f, by + 24.f);
+        btns[i].text.setOrigin(b.left + b.width / 2.f, b.top + b.height / 2.f);
+        btns[i].text.setPosition(WINDOW_WIDTH / 2.f, by + 24.f);
     }
 
     // Màu nút THOÁT GAME đỏ nhạt
@@ -508,18 +513,24 @@ int GameGraphics::showPause()
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-            { window.close(); return 2; }
+            {
+                window.close(); return 2;
+            }
 
             if (event.type == sf::Event::KeyReleased)
             {
-                if (event.key.code == sf::Keyboard::Up   || event.key.code == sf::Keyboard::W)
+                if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::W)
                     selected = (selected - 1 + OPT) % OPT;
                 else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S)
                     selected = (selected + 1) % OPT;
                 else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space)
-                { result = selected; decided = true; }
+                {
+                    result = selected; decided = true;
+                }
                 else if (event.key.code == sf::Keyboard::Escape)
-                { result = 0; decided = true; } // ESC lần 2 = tiếp tục
+                {
+                    result = 0; decided = true;
+                } // ESC lần 2 = tiếp tục
             }
             else if (event.type == sf::Event::MouseMoved)
             {
@@ -532,7 +543,9 @@ int GameGraphics::showPause()
                 sf::Vector2f mp((float)event.mouseButton.x, (float)event.mouseButton.y);
                 for (int i = 0; i < OPT; i++)
                     if (btns[i].bg.getGlobalBounds().contains(mp))
-                    { selected = i; result = selected; decided = true; }
+                    {
+                        selected = i; result = selected; decided = true;
+                    }
             }
         }
 
@@ -552,15 +565,16 @@ int GameGraphics::showPause()
                 btns[i].bg.setOutlineColor(accentCol);
                 btns[i].accent.setFillColor(
                     sf::Color(accentCol.r, accentCol.g, accentCol.b,
-                        (sf::Uint8)(180 + 60*pulse)));
-                sf::Color tc = (i == 2) ? sf::Color(255,100,100) : sf::Color(255,230,80);
+                        (sf::Uint8)(180 + 60 * pulse)));
+                sf::Color tc = (i == 2) ? sf::Color(255, 100, 100) : sf::Color(255, 230, 80);
                 btns[i].text.setFillColor(tc);
                 btns[i].text.setScale(1.04f, 1.04f);
-            } else {
-                btns[i].bg.setFillColor(sf::Color(30,20,50,100));
+            }
+            else {
+                btns[i].bg.setFillColor(sf::Color(30, 20, 50, 100));
                 btns[i].bg.setOutlineThickness(1.f);
-                btns[i].bg.setOutlineColor(sf::Color(120,100,60,70));
-                btns[i].text.setFillColor(sf::Color(180,165,120));
+                btns[i].bg.setOutlineColor(sf::Color(120, 100, 60, 70));
+                btns[i].text.setFillColor(sf::Color(180, 165, 120));
                 btns[i].text.setScale(1.f, 1.f);
             }
         }
@@ -581,8 +595,8 @@ int GameGraphics::showPause()
         for (auto& c : corners) window.draw(c);
 
         // Gradient trong panel
-        drawGradientRect(window, PX+2, PY+2, PW-4, PH-4,
-            sf::Color(20,12,40,100), sf::Color(5,3,15,100));
+        drawGradientRect(window, PX + 2, PY + 2, PW - 4, PH - 4,
+            sf::Color(20, 12, 40, 100), sf::Color(5, 3, 15, 100));
 
         window.draw(pauseShadow);
         window.draw(pauseTitle);
@@ -597,11 +611,11 @@ int GameGraphics::showPause()
         // Hint
         sf::Text hint;
         hint.setFont(font); hint.setCharacterSize(15);
-        hint.setFillColor(sf::Color(120,100,60,180));
+        hint.setFillColor(sf::Color(120, 100, 60, 180));
         hint.setString("ESC - Tiep tuc choi");
         sf::FloatRect hb = hint.getLocalBounds();
-        hint.setOrigin(hb.left+hb.width/2.f, hb.top+hb.height/2.f);
-        hint.setPosition(WINDOW_WIDTH/2.f, PY + PH - 22.f);
+        hint.setOrigin(hb.left + hb.width / 2.f, hb.top + hb.height / 2.f);
+        hint.setPosition(WINDOW_WIDTH / 2.f, PY + PH - 22.f);
         window.draw(hint);
 
         window.display();
@@ -692,6 +706,10 @@ void GameGraphics::init()
     framerateText.setCharacterSize(20);
     framerateText.setFillColor(sf::Color::White);
     framerateText.setPosition(10.f, 10.f);
+    coinText.setFont(font);
+    coinText.setCharacterSize(24);
+    coinText.setFillColor(sf::Color(255, 215, 0));
+    coinText.setPosition(10.f, 38.f);
 
     viewLeft = window.getDefaultView();
 
@@ -702,10 +720,11 @@ void GameGraphics::init()
 void GameGraphics::reinit()
 {
     // Reset trạng thái đồ họa để chơi lại từ đầu
-    framerate  = 0.f;
-    blinkTime  = 0.f;
-    rotation   = 0.f;
-    end        = false;
+    framerate = 0.f;
+    coinText.setString("Xu: 0");
+    blinkTime = 0.f;
+    rotation = 0.f;
+    end = false;
     hardcoreMode = false;
 
     map.clear();
@@ -713,7 +732,7 @@ void GameGraphics::reinit()
 
     viewLeft = window.getDefaultView();
     left_center_x = viewLeft.getSize().x / 2.f;
-    bound_min_y   = viewLeft.getSize().y / 2.f;
+    bound_min_y = viewLeft.getSize().y / 2.f;
 }
 
 void GameGraphics::loadMap() {
@@ -918,8 +937,11 @@ void GameGraphics::update(float deltaTime) {
 
     window.setView(window.getDefaultView());
     window.draw(framerateText);
+    coinText.setString("Xu: " + std::to_string(gameLogic.coinCount));
+    window.draw(coinText);
 
     window.display();
+    
 }
 
 GameGraphics::~GameGraphics() {}
