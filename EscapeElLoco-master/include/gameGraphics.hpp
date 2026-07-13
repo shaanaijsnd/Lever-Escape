@@ -64,6 +64,10 @@ public:
 	// Menu chinh
 	int showMenu();
 
+	// Menu tam dung (ESC trong game)
+	// Tra ve: 0 = Tiep tuc, 1 = Ve menu chinh, 2 = Thoat game
+	int showPause();
+
 	~GameGraphics();
 };
 
