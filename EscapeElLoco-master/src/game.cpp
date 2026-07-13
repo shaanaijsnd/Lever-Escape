@@ -5,7 +5,7 @@
 using namespace sf;
 using namespace std;
 
-Game::Game() : gameAudio(),gameLogic(gameAudio),gameGraphics(gameLogic) {
+Game::Game() : gameAudio(), gameLogic(gameAudio), gameGraphics(gameLogic) {
     run();
 }
 
@@ -36,7 +36,9 @@ void Game::run() {
             escPressed = false;
             while (gameGraphics.window.pollEvent(event)) {
                 if (event.type == Event::Closed)
-                { gameGraphics.window.close(); return; }
+                {
+                    gameGraphics.window.close(); return;
+                }
                 else if (event.type == Event::LostFocus)  gameLogic.pause = true;
                 else if (event.type == Event::GainedFocus) gameLogic.pause = false;
                 else if (event.type == Event::KeyReleased) {
@@ -52,9 +54,13 @@ void Game::run() {
                 int pauseResult = gameGraphics.showPause();
                 // 0 = Tiếp tục, 1 = Về menu, 2 = Thoát hẳn
                 if (pauseResult == 2)
-                { gameGraphics.window.close(); return; }
+                {
+                    gameGraphics.window.close(); return;
+                }
                 else if (pauseResult == 1)
-                { backToMenu = true; break; }
+                {
+                    backToMenu = true; break;
+                }
                 else
                 {
                     gameLogic.pause = false;
@@ -81,7 +87,9 @@ void Game::run() {
             {
                 while (gameGraphics.window.pollEvent(event)) {
                     if (event.type == Event::Closed)
-                    { gameGraphics.window.close(); return; }
+                    {
+                        gameGraphics.window.close(); return;
+                    }
                     if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
                         waiting = false;
                 }
@@ -90,4 +98,4 @@ void Game::run() {
     }
 }
 
-Game::~Game(){}
+Game::~Game() {}
