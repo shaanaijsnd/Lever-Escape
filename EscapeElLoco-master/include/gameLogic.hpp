@@ -86,6 +86,7 @@ public:
 
     int level;
     void resetGame();
+    int coinCount;
 
     float timer;
     float timerElLoco;
