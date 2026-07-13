@@ -85,6 +85,7 @@ public:
     GameAudio& gameAudio;
 
     int level;
+    void resetGame();
 
     float timer;
     float timerElLoco;
@@ -154,7 +155,7 @@ public:
         int indX,
         int indY,
         float deltaTime);
-    
+
     bool updateCoin(float deltaTime);
 
     bool updateCollapseBlocks(float deltaTime);
