@@ -12,7 +12,7 @@ Game::Game() : gameAudio(),gameLogic(gameAudio),gameGraphics(gameLogic) {
 void Game::run() {
     // Hien menu chinh truoc khi vao game, neu chon Quit thi thoat luon
     int menuChoice = gameGraphics.showMenu();
-    if (menuChoice == 1 || !gameGraphics.window.isOpen())
+    if (menuChoice != 0 || !gameGraphics.window.isOpen())
         return;
 
     deltaTime=1.0f/MINUTE;
