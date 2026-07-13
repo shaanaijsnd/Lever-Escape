@@ -16,6 +16,27 @@ GameLogic::GameLogic(GameAudio& audio)
 	initLevel();
 }
 
+void GameLogic::resetGame()
+{
+	level = 1;
+	pause = false;
+	end = false;
+	cheating = false;
+	modifs.clear();
+	map.map.clear();
+	map.collisions.clear();
+	timerBlocks.clear();
+	collapseBlocks.clear();
+	collapsingBlocks.clear();
+	player.coinBlocks.clear();
+	player.doorOpened = false;
+	player.key.collected = false;
+	player.coin.collected = false;
+	gameAudio.timer.stop();
+	gameAudio.music.stop();
+	initLevel();
+}
+
 void GameLogic::clear()
 {
 	++level;
